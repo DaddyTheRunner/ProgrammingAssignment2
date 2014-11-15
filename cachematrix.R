@@ -58,7 +58,7 @@ makeCacheMatrix <- function(x = matrix()) {
 	}
 
 	## get the stored matrix
-	get <- function(m) {
+	get <- function() {
 		x
 	}
 
