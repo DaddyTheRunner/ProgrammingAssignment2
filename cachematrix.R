@@ -11,11 +11,10 @@
 ## Specifically, it does not check to see if the
 ## matrix can be inverted before attempting the
 ## calculation.
-
 ## Function: makeCacheMatrix(x = matrix())
 ##
-## Author:  DaddyTheRunner
-## Date:  2014-11-14
+## Author: DaddyTheRunner
+## Date: 2014-11-14
 ##
 ## DESCRIPTION:
 ## makeCacheMatrix returns a list containing four functions
@@ -32,7 +31,7 @@
 ## superMatrix <- makeCacheMatrix(m)
 ##
 ## Store a matrix
-## m <- matrix(blah, blah, blah)
+## m <- matrix(1:4, nrow = 2, ncol = 2)
 ## superMatrix$set(m)
 ##
 ## Retrieve a matrix
@@ -46,14 +45,46 @@
 ## minv <- superMatrix$getInverse()
 
 makeCacheMatrix <- function(x = matrix()) {
+	## Create a cachedMatrix *object*
 
+	## Create an empty cache
+	cachedInv <- NULL
+
+	## Create the interface functions
+	## store the matrix and clear the cache
+	set <- function(m) {
+		x <<- m
+		cachedInv <<- NULL
+	}
+
+	## get the stored matrix
+	get <- function(m) {
+		x
+	}
+
+	## cache the inverse
+	setInverse <- function(minv) {
+		cachedInv <<- minv
+	}
+
+	## get the cached inverse
+	getInverse <- function() {
+		cachedInv
+	}
+
+	## create a list of the functions and return it
+	list(set = set,
+	     get = get,
+           setInverse = setInverse,
+	     getInverse = getInverse)
+	
 }
 
 
 ## Function: cacheSolve(x, ...)
 ##
-## Author:  DaddyTheRunner
-## Date:  2014-11-14
+## Author: DaddyTheRunner
+## Date: 2014-11-14
 ##
 ## DESCRIPTION:
 ## Calculates or retrieves the inverse of a matrix depending
@@ -70,5 +101,16 @@ makeCacheMatrix <- function(x = matrix()) {
 ## minv <- cacheSovle(superMatrix)
 
 cacheSolve <- function(x, verbose = FALSE, ...) {
-        ## Return a matrix that is the inverse of 'x'
+	## Return a matrix that is the inverse of 'x'
+
+	## Check to see if we have to calculate the inverse
+	if (is.null(x$getInverse())) {
+		## Calculate the inverse and cache it
+		if( verbose ) message("Starting the calculation...")
+		x$setInverse(solve(x$get(), ...))
+	}
+
+	## Return the inverse
+	x$getInverse()
+
 }
